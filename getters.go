@@ -367,10 +367,15 @@ func (ko *Koanf) Strings(path string) []string {
 	case []interface{}:
 		out = make([]string, 0, len(v))
 		for _, u := range v {
-			if s, ok := u.(string); ok {
-				out = append(out, s)
-			} else {
-				out = append(out, fmt.Sprintf("%v", u))
+			switch e := u.(type) {
+			case string:
+				out = append(out, e)
+			case map[string]interface{}:
+				for k := range e {
+					out = append(out, k)
+				}
+			default:
+				continue
 			}
 		}
 		return out
